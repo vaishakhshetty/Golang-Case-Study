@@ -23,11 +23,14 @@ type Item struct {
 	ID	string	`json:"id"`
 	Name	string	`json:"name"`
 	Quantity	int	`json:"quantity"`
-	Price	int	`json:"price"`
+	Price	string	`json:"price"`
 }
 
 //Init Items var as a slice Item struct ->
 var Items []Item
+
+//Slice for cache elements ->
+var cache = make([]string, 10)
 
 //Home Page ->
 func Home(w http.ResponseWriter, r *http.Request) {
@@ -58,15 +61,17 @@ func getItems(w http.ResponseWriter, r *http.Request) {
 		 for _, item := range Items {
 
 			if item.Name == params["name"] {
+				cache = append(cache, string(item.ID), string(item.Name), string(item.Price), fmt.Sprint(item.Quantity))
 				flag = 1
 				json.NewEncoder(w).Encode(item)
 				return
 			}
 		 }
 	 }
+	 fmt.Println(cache)
 
 	 if flag == 0 {
-		 json.NewEncoder(w).Encode("NOT FOUND")
+		 json.NewEncoder(w).Encode("NOT_FOUND")
 	 }
 }
 
@@ -94,16 +99,17 @@ func getItemsByQty(w http.ResponseWriter, r *http.Request) {
 		 qty, _ := strconv.Atoi(params["quantity"])
 
 		 for _, item := range Items {
-			 fmt.Println(item)
 			 if item.Name == params["name"] && item.Quantity >= qty {
+				 cache = append(cache, string(item.ID), string(item.Name), string(item.Price), fmt.Sprint(item.Quantity))
 				 flag = 1
 				 json.NewEncoder(w).Encode(item)
 			 }
 		 }
 	}
+	fmt.Println(cache)
 
 	if flag == 0 {
-		json.NewEncoder(w).Encode("NOT FOUND")
+		json.NewEncoder(w).Encode("NOT_FOUND")
 	}
 }
 
@@ -127,19 +133,20 @@ func getItemsByPrice(w http.ResponseWriter, r *http.Request) {
 		 json.Unmarshal(data, &Items)
 
 		 params := mux.Vars(r)
-		 price, _ := strconv.Atoi(params["price"])
+		 qty, _ := strconv.Atoi(params["quantity"])
 
 		 for _, item := range Items {
-			 fmt.Println(item)
-			 if item.Name == params["name"] && item.Price >= price {
+			 if item.Name == params["name"] && item.Quantity >= qty && item.Price == params["price"] {
+				 cache = append(cache, string(item.ID), string(item.Name), string(item.Price), fmt.Sprint(item.Quantity))
 				 flag = 1
 				 json.NewEncoder(w).Encode(item)
 			 }
 		 }
 	}
+	fmt.Println(cache)
 
 	if flag == 0 {
-		json.NewEncoder(w).Encode("NOT FOUND")
+		json.NewEncoder(w).Encode("NOT_FOUND")
 	}
 }
 
