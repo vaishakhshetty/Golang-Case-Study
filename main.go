@@ -150,6 +150,21 @@ func getItemsByPrice(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func showSummary(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Products Are-\n")
+	fmt.Fprintf(w, "\n ID \t\t Name \t Quantity \t Price")
+	fmt.Fprintf(w, "\n 24-583-0264 \t Apple \t 30 \t\t $62.02")
+	fmt.Fprintf(w, "\n 75-588-0160 \t Apple \t 28 \t\t $86.41")
+	fmt.Fprintf(w, "\n 28-996-2788 \t Banana  21 \t\t $99.41")
+	fmt.Fprintf(w, "\n 76-152-3057 \t Carrot  13 \t\t $71.01")
+	fmt.Fprintf(w, "\n 74-033-7213 \t okra \t 15 \t\t $61.42")
+	fmt.Fprintf(w, "\n 87-108-0068 \t Onion \t 20 \t\t $76.30")
+	fmt.Fprintf(w, "\n 66-907-8874 \t wheat \t 22 \t\t $89.96")
+	fmt.Fprintf(w, "\n 51-268-1902 \t barley  26 \t\t $50.92")
+	fmt.Fprintf(w, "\n 68-684-1026 \t rye \t 14 \t\t $80.90")
+	fmt.Println("Endpoint Hit: Summary Page")
+}
+
 func main() {
 	//Init Router ->
 	r := mux.NewRouter()
@@ -159,6 +174,7 @@ func main() {
 	r.HandleFunc("/api/buy-item/{name}", getItems).Methods("GET")
 	r.HandleFunc("/api/buy-item-qty/{name}&{quantity}", getItemsByQty).Methods("GET")
 	r.HandleFunc("/api/buy-item-qty-price/{name}&{quantity}&{price}", getItemsByPrice).Methods("GET")
+	r.HandleFunc("/api/show-summary", showSummary).Methods("GET")
 
 	fmt.Println("Server started on port:8000")
 	log.Fatal(http.ListenAndServe(":8000", r))
